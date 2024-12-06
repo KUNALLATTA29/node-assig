@@ -1,5 +1,5 @@
 const userModel = require('../model/userModel')
-const nodemailer = require('nodemailer')
+
 
 
 exports.handleusers = async (req,res)=>{
@@ -27,34 +27,3 @@ exports.handlesingleuser = async(req,res)=>{
     }
 }
 
-exports.handleforgetpassword = async(req,res)=>{
-    try{
-        const {email} = req.body
-        if(!email){
-            return res.status(401).json({message:"email is required"})
-        }
-        const user = await userModel.findOne({email})
-        if(!user){
-            return res.status(401).json({message:"invalid email"})
-        }
-        const otp = Math.floor(Math.random()*1000000).toString()
-        const expiretime = moment().add(10,'minutes').toDate()
-
-        user.otp = otp
-        user.expire = expiretime
-        await user.save()
-
-        const transporter = nodemailer.createTransport({
-            host: 'live.smtp.mailtrap.io',
-            port: 587,
-            secure: false, // use SSL
-            auth: {
-              user: '1a2b3c4d5e6f7g',
-              pass: '1a2b3c4d5e6f7g',
-            }
-        })
-
-    }catch(err){
-        return res.status(500).json({error:"server error",err})
-    }
-}
