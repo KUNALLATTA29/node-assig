@@ -46,8 +46,8 @@ exports.handlelogin = async(req,res)=>{
             return res.status(404).json({message:"password is wrong"})
         }
         const token = jwt.sign({id:user._id},process.env.JWT_SECRET_KEY,{expiresIn:'1d'})
-
-        return res.status(200).json({message:"User Loggedin Successfully",token})
+        console.log(token)
+        return res.status(200).json({message:"User Loggedin Successfully",token,userId:user._id})
         
     }catch(err){
         return res.status(500).json({error:"server error",err})
@@ -138,3 +138,15 @@ exports.handlereset = async (req, res) => {
         return res.status(500).json({ error: "Server issue", details: err.message });
     }
 };
+
+exports.getMe = async (req, res) => {
+    try {
+      const user = await userModel.findById(req.user.id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      res.status(200).json({ userId: user._id });
+    } catch (err) {
+      res.status(500).json({ error: 'Server error', details: err.message });
+    }
+  };

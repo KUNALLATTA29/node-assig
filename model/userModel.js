@@ -21,7 +21,7 @@ const userSchema = mongoose.Schema({
     expire:{
         type:Date
     }
-})
+},{timestamps:true,versionKey: false})
 
 const userModel = mongoose.model('Users',userSchema)
 
